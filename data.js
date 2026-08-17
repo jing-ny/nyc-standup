@@ -40,13 +40,14 @@ const MICS = [
       { day: "Tue", time: "17:00" },
       { day: "Fri", time: "12:00" }
     ],
-    signup: { method: "online", url: "https://westsidecomedyclub.com/open-mic/", note: null },
+    signup: { method: "online", url: "https://www.westsidecomedyclub.com", phone: "(646) 973-1300", note: "Find “Open Mics” in the site menu — deep links break on their site. Limited to 15 comics; register in advance." },
     cost: { entry: "$5", minimum: "No drink minimum" },
     set_length: "5 min + 2 min feedback",
     language: "English",
     beginner_notes: [
       "You get 2 minutes of structured feedback after your set — rare and great for new material.",
-      "Daytime slots (Fri noon) tend to be lower pressure."
+      "Daytime slots (Fri noon) tend to be lower pressure.",
+      "Clean material is required at this mic — plan your set accordingly."
     ],
     verification: { method: "web", last_verified: "2026-08-16", status: "verified" }
   },
