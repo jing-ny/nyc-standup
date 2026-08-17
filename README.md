@@ -23,11 +23,13 @@ the four sign-up systems, and a step-by-step first night.
 ## Corrections & contributions
 
 Spotted a dead mic, a changed time, or a beginner-friendly room we're missing?
-[Open an issue](../../issues). Please include a source (link, or "I was there on <date>").
-Reports without evidence go into a to-verify queue rather than straight into the data.
+[Open an issue](../../issues) or email **nycstandup.site@gmail.com**. Please include a
+source (link, or "I was there on <date>"). Reports without evidence go into a
+to-verify queue rather than straight into the data.
 
 **Venue owners / mic producers:** want your listing corrected or removed?
-Open an issue or email — takedown on request, no questions asked.
+Email **nycstandup.site@gmail.com** or open an issue — takedown on request,
+no questions asked.
 
 ## Tech
 
