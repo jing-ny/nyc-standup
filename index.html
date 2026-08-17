@@ -5,28 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NYC Standup — open mics for your first time up</title>
 <meta name="description" content="A hand-verified, beginner-first list of NYC open mics. Signup method, cost, set length, and what to expect — checked by a human, dated.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <h1><a href="./">nyc-standup</a></h1>
-  <p class="tagline">Open mics for people trying standup for the first time. Short list, hand-verified, dated.</p>
-  <nav class="top">
-    <a href="guide.html">First mic? Read this →</a>
-  </nav>
-  <div class="freshness">
-    Every entry shows when a human last verified it. Schedules change weekly in this city —
-    anything marked <b>call ahead</b>, confirm before you commute. For an exhaustive (but
-    less curated) list, see <a href="https://badslava.com/new-york-open-mics.php">badslava</a>.
-  </div>
+<header class="masthead">
+  <h1><a href="./">NYC<span class="slash">/</span>STANDUP</a></h1>
+  <p class="tagline">Open mics for your first time up · Manhattan · hand-verified</p>
+  <hr class="rule">
 </header>
+<nav class="top">
+  <a href="guide.html">First mic? Read the guide →</a>
+  <a class="ext" href="https://github.com/jing-ny/nyc-standup">source</a>
+</nav>
+
+<p class="standfirst">
+  A deliberately short list. Every entry shows <b>when a human last verified it</b> —
+  schedules change weekly in this city, so anything marked <b>call ahead</b>, confirm
+  before you commute. Want the exhaustive version? That's
+  <a href="https://badslava.com/new-york-open-mics.php">badslava</a>. Want your first
+  mic this week? Start here.
+</p>
 
 <section class="filters" aria-label="filters">
-  <div class="chip-row" id="dayChips"></div>
+  <div class="day-row" id="dayChips"></div>
   <div class="toggle-row">
-    <button class="chip" id="freeChip">Free only</button>
-    <button class="chip" id="onlineChip">Online signup</button>
-    <button class="chip" id="manhattanChip">Manhattan</button>
+    <button class="toggle" id="freeChip">Free only</button>
+    <button class="toggle" id="onlineChip">Online signup</button>
   </div>
 </section>
 
@@ -39,9 +46,9 @@
   <p>Built and maintained by a working comic. Corrections welcome —
   <a href="https://github.com/jing-ny/nyc-standup/issues">open an issue</a> or email
   <a href="mailto:nycstandup.site@gmail.com">nycstandup.site@gmail.com</a>.</p>
-  <p style="margin-top:6px">Venue owners: want a listing changed or removed? Email
+  <p>Venue owners: want a listing changed or removed? Email
   <a href="mailto:nycstandup.site@gmail.com">nycstandup.site@gmail.com</a> — takedown on request, no questions.</p>
-  <p style="margin-top:6px">Code MIT · original content CC BY 4.0 · <a href="https://github.com/jing-ny/nyc-standup">source</a></p>
+  <p>Code MIT · original content CC BY 4.0 · <a href="https://github.com/jing-ny/nyc-standup">source</a></p>
 </footer>
 
 <script src="data.js"></script>
@@ -50,73 +57,72 @@
   const listEl = document.getElementById("list");
   const countEl = document.getElementById("count");
   const DAYS = ["All", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const todayIdx = new Date().getDay(); // 0=Sun
-  const todayName = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][todayIdx];
-  let state = { day: "All", freeOnly: false, onlineOnly: false, manhattanOnly: false };
+  const todayName = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][new Date().getDay()];
+  let state = { day: "All", freeOnly: false, onlineOnly: false };
 
   if (typeof MICS === "undefined" || !Array.isArray(MICS)) {
-    listEl.innerHTML = '<div class="state error">Couldn’t load the mic list. Try refreshing — or view the raw data on <a href="https://github.com/jing-ny/nyc-standup">GitHub</a>.</div>';
+    listEl.innerHTML = '<div class="state">Couldn’t load the mic list. Try refreshing — or view the raw data on <a href="https://github.com/jing-ny/nyc-standup">GitHub</a>.</div>';
     return;
   }
 
   const chipRow = document.getElementById("dayChips");
   DAYS.forEach(d => {
     const b = document.createElement("button");
-    b.className = "chip" + (d === "All" ? " active" : "");
-    b.textContent = d === todayName ? d + " (today)" : d;
+    b.className = "day" + (d === "All" ? " active" : "");
+    b.innerHTML = d === todayName ? d + ' <span class="today-dot">●</span>' : d;
     b.dataset.day = d;
     b.onclick = () => { state.day = d; render(); syncChips(); };
     chipRow.appendChild(b);
   });
   function syncChips() {
-    chipRow.querySelectorAll(".chip").forEach(c => c.classList.toggle("active", c.dataset.day === state.day));
+    chipRow.querySelectorAll(".day").forEach(c => c.classList.toggle("active", c.dataset.day === state.day));
     document.getElementById("freeChip").classList.toggle("active", state.freeOnly);
     document.getElementById("onlineChip").classList.toggle("active", state.onlineOnly);
-    document.getElementById("manhattanChip").classList.toggle("active", state.manhattanOnly);
   }
   document.getElementById("freeChip").onclick = () => { state.freeOnly = !state.freeOnly; render(); syncChips(); };
   document.getElementById("onlineChip").onclick = () => { state.onlineOnly = !state.onlineOnly; render(); syncChips(); };
-  document.getElementById("manhattanChip").onclick = () => { state.manhattanOnly = !state.manhattanOnly; render(); syncChips(); };
 
   function matchesDay(mic, day) {
     if (day === "All") return true;
     return mic.sessions.some(s => s.day === day || s.day === "Daily");
   }
   function isFree(mic) { return (mic.cost.entry || "").toLowerCase().startsWith("free"); }
-
   function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+  function stampDate(iso) {
+    const m = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+    const p = iso.split("-");
+    return m[+p[1] - 1] + " " + (+p[2]);
+  }
 
-  function card(mic) {
+  function card(mic, i) {
     const v = mic.verification;
-    const vBadge = v.status === "verified"
-      ? `<span class="badge verify-ok">verified ${esc(v.last_verified)}</span>`
-      : `<span class="badge verify-warn">call ahead · checked ${esc(v.last_verified)}</span>`;
-    const badges = [
-      isFree(mic) ? '<span class="badge free">Free</span>' : "",
-      `<span class="badge">${esc(mic.signup.method)} signup</span>`,
-      `<span class="badge">${esc(mic.set_length)}</span>`,
-      vBadge
-    ].join("");
+    const stamp = v.status === "verified"
+      ? `<span class="stamp ok">✓ verified ${stampDate(v.last_verified)}</span>`
+      : `<span class="stamp warn">call ahead · ${stampDate(v.last_verified)}</span>`;
+    const num = String(i + 1).padStart(2, "0");
     const sessions = mic.sessions.map(s =>
       `<span class="slot"><b>${esc(s.day)}</b> ${esc(s.time)}${s.note ? " · " + esc(s.note) : ""}</span>`
     ).join("");
     const costBits = [mic.cost.entry, mic.cost.minimum].filter(Boolean).map(esc).join(" · ");
+    const cost = isFree(mic)
+      ? `<span class="free-tag">Free</span>${esc(mic.cost.minimum || "")}`
+      : costBits;
     const signupBits = [
-      mic.signup.url ? `<a href="${esc(mic.signup.url)}" rel="noopener">sign-up link</a>` : "",
+      mic.signup.url ? `<a href="${esc(mic.signup.url)}" rel="noopener">${esc(mic.signup.method)} — link</a>` : esc(mic.signup.method),
       mic.signup.phone ? esc(mic.signup.phone) : "",
       mic.signup.note ? esc(mic.signup.note) : ""
     ].filter(Boolean).join(" · ");
     const notes = (mic.beginner_notes || []).map(n => `<li>${esc(n)}</li>`).join("");
-    return `<div class="card">
-      <h2>${esc(mic.name)}</h2>
-      <div class="where">${esc(mic.venue)} · ${esc(mic.area)} · ${esc(mic.borough)}</div>
-      <div class="badges">${badges}</div>
-      <div class="sessions">${sessions}${mic.sessions_note ? `<div class="meta">${esc(mic.sessions_note)}</div>` : ""}</div>
-      <div class="meta">
-        ${costBits ? `<div>💵 ${costBits}</div>` : ""}
-        ${signupBits ? `<div>✍️ ${signupBits}</div>` : ""}
-      </div>
-      ${notes ? `<ul class="beginner">${notes}</ul>` : ""}
+    return `<div class="mic">
+      <div class="mic-head"><span class="mic-num">${num}</span><h2>${esc(mic.name)}</h2>${stamp}</div>
+      <div class="where">${esc(mic.venue)} · ${esc(mic.area)}</div>
+      <div class="slots">${sessions}${mic.sessions_note ? `<div class="slots-note">${esc(mic.sessions_note)}</div>` : ""}</div>
+      <dl class="facts">
+        ${cost ? `<div><dt>Cost</dt><dd>${cost}</dd></div>` : ""}
+        <div><dt>Sign-up</dt><dd>${signupBits}</dd></div>
+        <div><dt>Set</dt><dd>${esc(mic.set_length)}</dd></div>
+      </dl>
+      ${notes ? `<ul class="notes">${notes}</ul>` : ""}
     </div>`;
   }
 
@@ -124,9 +130,8 @@
     let mics = MICS.filter(m => matchesDay(m, state.day));
     if (state.freeOnly) mics = mics.filter(isFree);
     if (state.onlineOnly) mics = mics.filter(m => m.signup.method === "online");
-    if (state.manhattanOnly) mics = mics.filter(m => m.borough === "Manhattan");
     countEl.textContent = mics.length
-      ? `${mics.length} mic${mics.length > 1 ? "s" : ""}${state.day !== "All" ? " on " + state.day : ""}`
+      ? `${mics.length} mic${mics.length > 1 ? "s" : ""}${state.day !== "All" ? " · " + state.day : ""}`
       : "";
     listEl.innerHTML = mics.length
       ? mics.map(card).join("")
